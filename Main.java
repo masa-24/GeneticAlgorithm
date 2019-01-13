@@ -7,21 +7,23 @@ public class Main {
 
 		//一番最初の現行世代個体集団を生成
 		ArrayList<Genom> currentGenerationIndividualGroup = new ArrayList<>(); //現行世代個体集団
-		for(int i = 0; i < GA.genomNum; i++){
+		for(int i = 0; i < GA.GENOM_NUM; i++){
 			currentGenerationIndividualGroup.add(ga.createGenom());
 		}
 
 		ArrayList<Genom> eliteGenes = new ArrayList<>(); //エリート集団
 		ArrayList<Genom> offsprings = new ArrayList<>(); //子孫
 		ArrayList<Genom> nextGenerationIndividualGroup = new ArrayList<>(); //次世代個体集団
-		for(int count = 1; count < GA.maxGeneration+1; count++){
+		for(int count = 1; count < GA.MAX_GENERATION+1; count++){
 			for(int i = 0; i < currentGenerationIndividualGroup.size(); i++){
-				double eval = ga.evaluation(currentGenerationIndividualGroup.get(i));
+				//double eval = ga.evaluation(currentGenerationIndividualGroup.get(i));
+				double eval = ga.negotiation(currentGenerationIndividualGroup.get(i));
 				currentGenerationIndividualGroup.get(i).setEvaluation(eval); //現行世代のi番目の遺伝子に評価値を設定
 			}
 			//eliteGenes = ga.selection(currentGenerationIndividualGroup); //エリートを選択
 			eliteGenes = ga.stochasticUniversalSampling(currentGenerationIndividualGroup);
-			for(int i = 1; i < GA.offspringNum; i++){
+			//子孫を生成
+			for(int i = 1; i < GA.OFFSPRING_NUM; i++){
 				offsprings.addAll(ga.crossover(eliteGenes.get(i), eliteGenes.get(i-1)));
 			}
 			// 次世代個体集団を現行世代，エリート，子孫から生成
@@ -51,7 +53,7 @@ public class Main {
 			currentGenerationIndividualGroup.clear();
 			currentGenerationIndividualGroup.addAll(nextGenerationIndividualGroup);
 			// 各ArrayListを初期化
-			if(count < GA.maxGeneration){
+			if(count < GA.MAX_GENERATION){
 				eliteGenes.clear();
 				offsprings.clear();
 				nextGenerationIndividualGroup.clear();				
@@ -64,7 +66,7 @@ public class Main {
 	//Booleanである遺伝子 を 0/1のString に直す関数．1がtrue, 0がfalse
 	public static String encodeGenom(ArrayList<Boolean> genomList){
 		String s = "";
-		for(int i = 0; i < GA.genomLength; i++){
+		for(int i = 0; i < GA.GENOM_LENGTH; i++){
 			if(genomList.get(i)){
 				s += 1;
 			}else{

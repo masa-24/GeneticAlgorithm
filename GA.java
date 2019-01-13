@@ -4,12 +4,12 @@ import java.util.Comparator;
 import java.util.Random;
 
 public class GA {	
-	final public static int genomLength = 100; //遺伝子の長さ
-	final public static int genomNum = 100; //遺伝子の数
-	final public static int offspringNum = 50; //子孫の数
-	final public static double individualMutation = 0.1; //個体突然変異確率
-	final public static double genomMutation = 0.1; //遺伝子突然変異確率
-	final public static int maxGeneration = 40; //繰り返す世代数
+	final public static int GENOM_LENGTH = 100; //遺伝子の長さ
+	final public static int GENOM_NUM = 100; //遺伝子の数
+	final public static int OFFSPRING_NUM = 50; //子孫の数
+	final public static double INDIVUDUAL_MUTATION_PROBABILITY = 0.1; //個体突然変異確率
+	final public static double GENOM_MUTATION_PROBABILITY = 0.1; //遺伝子突然変異確率
+	final public static int MAX_GENERATION = 40; //繰り返す世代数
 	
 	Random rand = new Random();
 
@@ -17,7 +17,7 @@ public class GA {
 	public Genom createGenom(){
 		ArrayList<Boolean> genom = new ArrayList<>();
 
-		for(int i = 0; i < genomLength; i++){
+		for(int i = 0; i < GENOM_LENGTH; i++){
 			genom.add(rand.nextBoolean());
 		}
 		
@@ -30,18 +30,62 @@ public class GA {
 		int sum = 0;
 		double result = 0.0;
 		
-		for(int i = 0; i < genomLength; i++){
+		for(int i = 0; i < GENOM_LENGTH; i++){
 			if(g.getGenom().get(i)) sum++;
 		}
-		result = sum / (double)genomLength;
+		result = sum / (double)GENOM_LENGTH;
 		//System.out.println("sum :" + sum + ", " + "result : " + result);
 		
 		return result;
 	}
-	
-	public double negotiation(){
-		double result = 0.0;
+
+	public double negotiation(Genom g){
+		double result = 0.0;	//評価値
+		Pair<Character, Integer> p = new Pair<>();
+		ArrayList<Pair<Character, Integer>> selfishAgentPref = new ArrayList<>();
+		ArrayList<Pair<Character, Integer>> misrepresentingAgentPref = new ArrayList<>();
+		MisrepresentationGame mg = new MisrepresentationGame();
+		
+		// エージェントの選好を設定
+		for(int i = 0; i < MisrepresentationGame.ISSUE.size(); i++){
+			p.setBoth(MisrepresentationGame.ISSUE.get(i), i+1);
+			selfishAgentPref.add(p);
+//			System.out.println("agent1: " + selfishAgentPref.get(i).getLeft() + ", " + selfishAgentPref.get(i).getRight());
+//			System.out.println("agent1: " + p.getLeft() + ", " + p.getRight());
+			p.setBoth(MisrepresentationGame.ISSUE.get(i), MisrepresentationGame.ISSUE.size()-i);
+			misrepresentingAgentPref.add(p);
+//			System.out.println("agent2: " + misrepresentingAgentPref.get(i).getLeft() + ", " + misrepresentingAgentPref.get(i).getRight());
+//			System.out.println("agent2: " + p.getLeft() + ", " + p.getRight());
+//			System.out.println(misrepresentingAgentPref);
+		}
+//		System.out.println(selfishAgentPref.size());
+//		for(int i = 0; i < selfishAgentPref.size(); i++){
+//			System.out.println(MisrepresentationGame.ISSUE.get(i));
+//			System.out.println("agent1: " + selfishAgentPref.get(i).getLeft() + ", " + selfishAgentPref.get(i).getRight());
+//			System.out.println("agent2: " + misrepresentingAgentPref.get(i).getLeft() + ", " + misrepresentingAgentPref.get(i).getRight());
+//		}
+		
+		// エージェント生成
+		SelfishAgent sAgent = new SelfishAgent(selfishAgentPref);
+		MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
+
+//		System.out.println(sAgent.revealPreference());
+//		System.out.println(mAgent.revealPreference());
+		
+		mg.preferenceElicitation(sAgent, mAgent, g);
+		mg.deal(sAgent, mAgent, g);
+
+		result = (factorial(MisrepresentationGame.ISSUE.size()) - Math.abs(mAgent.getFakeUtility() - mAgent.getUtility())) / factorial(MisrepresentationGame.ISSUE.size());
+
 		return result;
+	}
+
+	public int factorial(int x){
+		if(x > 0){
+			return x + factorial(x-1);
+		}else{
+			return 0;
+		}
 	}
 	
 	//選択関数(エリート主義)
@@ -84,14 +128,14 @@ public class GA {
 		
 		/* SUS */
 		double r = rand.nextDouble();
-		r /= offspringNum;
+		r /= OFFSPRING_NUM;
 	
 		int currentMember = 0;
 		int i = 0;
-		while(currentMember < offspringNum){
-			while(r <= cpdist[i] && currentMember < offspringNum){
+		while(currentMember < OFFSPRING_NUM){
+			while(r <= cpdist[i] && currentMember < OFFSPRING_NUM){
 				matingPool.add(parents.get(i));
-				r = r+(1/(double)offspringNum);
+				r = r+(1/(double)OFFSPRING_NUM);
 				currentMember++;
 			}
 			i++;
@@ -116,13 +160,13 @@ public class GA {
 		ArrayList<Boolean> olderBrother = new ArrayList<>();
 		ArrayList<Boolean> yongerBrother = new ArrayList<>();
 		// 交叉する2点を決定
-		int crossFirst = rand.nextInt(genomLength);
-		int crossSecond = rand.nextInt(genomLength-crossFirst) + crossFirst;
+		int crossFirst = rand.nextInt(GENOM_LENGTH);
+		int crossSecond = rand.nextInt(GENOM_LENGTH-crossFirst) + crossFirst;
 		// 親の遺伝子を取り出す
 		ArrayList<Boolean> fatherGenom = father.getGenom();
 		ArrayList<Boolean> motherGenom = mother.getGenom();
 		// 交叉
-		for(int i = 0; i < genomLength; i++){
+		for(int i = 0; i < GENOM_LENGTH; i++){
 			if(i < crossFirst || i >= crossSecond){
 				olderBrother.add(i, fatherGenom.get(i));
 				yongerBrother.add(i, motherGenom.get(i));
@@ -163,10 +207,10 @@ public class GA {
 		ArrayList<Genom> mutated = new ArrayList<>(); //突然変異後の遺伝子集団
 		
 		for(int i = 0; i < genomGroup.size(); i++){
-			if(individualMutation > rand.nextDouble()){
+			if(INDIVUDUAL_MUTATION_PROBABILITY > rand.nextDouble()){
 				ArrayList<Boolean> tmpGeno = new ArrayList<>(); //変異させる遺伝子を入れる
-				for(int j = 0; j < genomLength; j++){
-					if(genomMutation > rand.nextDouble()){
+				for(int j = 0; j < GENOM_LENGTH; j++){
+					if(GENOM_MUTATION_PROBABILITY > rand.nextDouble()){
 						tmpGeno.add(rand.nextBoolean());
 					}else{
 						tmpGeno.add(genomGroup.get(i).getGenom().get(j));
