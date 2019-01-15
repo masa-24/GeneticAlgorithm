@@ -51,15 +51,14 @@ public class SelfishAgent implements Agent{
     	ArrayList<Pair<Character, Integer>> partPref = new ArrayList<>();
     	char better = '?';
     	char worse = '?';
-//    	System.out.println(issue1 + ", " + issue2);
+
     	for(int i = 0; i < preference.size(); i++){
-//        	System.out.println(i + ", " + preference.get(i).getLeft());
     		if(issue1 == preference.get(i).getLeft() || issue2 == preference.get(i).getLeft()){
     			partPref.add(preference.get(i));
     		}
     	}
     	if(partPref.size() != 2){
-    		System.out.println("error: " + partPref);
+    		System.err.println("error: " + partPref + ", partPref.size:" + partPref.size());
     		System.exit(-1);
     	}
     	if(Math.max(partPref.get(0).getRight(), partPref.get(1).getRight()) == partPref.get(0).getRight()){

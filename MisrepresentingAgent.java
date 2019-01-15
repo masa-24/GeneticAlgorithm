@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class MisrepresentingAgent extends SelfishAgent implements Agent{
+public class MisrepresentingAgent extends SelfishAgent{
 	private int fakeUtility = 0;
 
 	public MisrepresentingAgent(ArrayList<Pair<Character, Integer>> preference) {

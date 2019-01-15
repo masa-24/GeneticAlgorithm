@@ -20,6 +20,8 @@ public class Main {
 				double eval = ga.negotiation(currentGenerationIndividualGroup.get(i));
 				currentGenerationIndividualGroup.get(i).setEvaluation(eval); //現行世代のi番目の遺伝子に評価値を設定
 			}
+			System.out.println("交渉問題なし．終了します");
+			System.exit(-1);
 			//eliteGenes = ga.selection(currentGenerationIndividualGroup); //エリートを選択
 			eliteGenes = ga.stochasticUniversalSampling(currentGenerationIndividualGroup);
 			//子孫を生成
@@ -59,12 +61,11 @@ public class Main {
 				nextGenerationIndividualGroup.clear();				
 			}
 		}
-		//System.out.println("最も優れた個体は" + eliteGenes.get(0).getGenom());
-		System.out.println("最も優れた個体は" + encodeGenom(eliteGenes.get(0).getGenom()) + ", 評価値は " + eliteGenes.get(0).getEvaluation());
+		System.out.println("最も優れた個体は" + decodeGenom(eliteGenes.get(0).getGenom()) + ", 評価値は " + eliteGenes.get(0).getEvaluation());
 	}
 	
-	//Booleanである遺伝子 を 0/1のString に直す関数．1がtrue, 0がfalse
-	public static String encodeGenom(ArrayList<Boolean> genomList){
+	//Booleanである遺伝子を 0/1のString に直す関数．1がtrue, 0がfalse
+	public static String decodeGenom(ArrayList<Boolean> genomList){
 		String s = "";
 		for(int i = 0; i < GA.GENOM_LENGTH; i++){
 			if(genomList.get(i)){

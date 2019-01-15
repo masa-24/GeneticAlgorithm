@@ -4,9 +4,9 @@ import java.util.Comparator;
 import java.util.Random;
 
 public class GA {	
-	final public static int GENOM_LENGTH = 100; //遺伝子の長さ
-	final public static int GENOM_NUM = 100; //遺伝子の数
-	final public static int OFFSPRING_NUM = 50; //子孫の数
+	final public static int GENOM_LENGTH = 1; //遺伝子の長さ
+	final public static int GENOM_NUM = 1; //遺伝子の数
+	final public static int OFFSPRING_NUM = 1; //子孫の数
 	final public static double INDIVUDUAL_MUTATION_PROBABILITY = 0.1; //個体突然変異確率
 	final public static double GENOM_MUTATION_PROBABILITY = 0.1; //遺伝子突然変異確率
 	final public static int MAX_GENERATION = 40; //繰り返す世代数
@@ -39,42 +39,35 @@ public class GA {
 		return result;
 	}
 
+	//
 	public double negotiation(Genom g){
 		double result = 0.0;	//評価値
-		Pair<Character, Integer> p = new Pair<>();
 		ArrayList<Pair<Character, Integer>> selfishAgentPref = new ArrayList<>();
 		ArrayList<Pair<Character, Integer>> misrepresentingAgentPref = new ArrayList<>();
 		MisrepresentationGame mg = new MisrepresentationGame();
 		
-		// エージェントの選好を設定
+		// 自己中心的なエージェントの選好を用意
 		for(int i = 0; i < MisrepresentationGame.ISSUE.size(); i++){
-			p.setBoth(MisrepresentationGame.ISSUE.get(i), i+1);
-			selfishAgentPref.add(p);
-//			System.out.println("agent1: " + selfishAgentPref.get(i).getLeft() + ", " + selfishAgentPref.get(i).getRight());
-//			System.out.println("agent1: " + p.getLeft() + ", " + p.getRight());
-			p.setBoth(MisrepresentationGame.ISSUE.get(i), MisrepresentationGame.ISSUE.size()-i);
-			misrepresentingAgentPref.add(p);
-//			System.out.println("agent2: " + misrepresentingAgentPref.get(i).getLeft() + ", " + misrepresentingAgentPref.get(i).getRight());
-//			System.out.println("agent2: " + p.getLeft() + ", " + p.getRight());
-//			System.out.println(misrepresentingAgentPref);
+			Pair<Character, Integer> temp = new Pair<>();
+			temp.setBoth(MisrepresentationGame.ISSUE.get(i), i+1);
+			selfishAgentPref.add(temp);
 		}
-//		System.out.println(selfishAgentPref.size());
-//		for(int i = 0; i < selfishAgentPref.size(); i++){
-//			System.out.println(MisrepresentationGame.ISSUE.get(i));
-//			System.out.println("agent1: " + selfishAgentPref.get(i).getLeft() + ", " + selfishAgentPref.get(i).getRight());
-//			System.out.println("agent2: " + misrepresentingAgentPref.get(i).getLeft() + ", " + misrepresentingAgentPref.get(i).getRight());
-//		}
+		// Misrepresenting agentの選好を用意
+		for(int i = 0; i < MisrepresentationGame.ISSUE.size(); i++){
+			Pair<Character, Integer> temp = new Pair<>();
+			temp.setBoth(MisrepresentationGame.ISSUE.get(i), MisrepresentationGame.ISSUE.size()-i);
+			misrepresentingAgentPref.add(temp);
+		}
 		
 		// エージェント生成
 		SelfishAgent sAgent = new SelfishAgent(selfishAgentPref);
 		MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
-
-//		System.out.println(sAgent.revealPreference());
-//		System.out.println(mAgent.revealPreference());
 		
 		mg.preferenceElicitation(sAgent, mAgent, g);
 		mg.deal(sAgent, mAgent, g);
 
+		// (論点数の階乗 - (偽の効用 - 本来の効用))/論点数の階乗．
+		// 偽の効用が高くなるほど評価値が低くなる&評価値最大が1になるように正規化 
 		result = (factorial(MisrepresentationGame.ISSUE.size()) - Math.abs(mAgent.getFakeUtility() - mAgent.getUtility())) / factorial(MisrepresentationGame.ISSUE.size());
 
 		return result;
@@ -108,23 +101,20 @@ public class GA {
 	}
 	*/
 	
+	// Introduction to Evolutionary Computingでおすすめされてた選択関数
 	public ArrayList<Genom> stochasticUniversalSampling(ArrayList<Genom> parents){
-		ArrayList<Genom> matingPool = new ArrayList<>();		
+		ArrayList<Genom> matingPool = new ArrayList<>(); //選ばれたparentsを入れる
 
 		double sum = 0.0;
 		double[] cpdist = new double[parents.size()];
-		/* cumulative probability distributionの計算 */
+		/* 累積確率分布の計算 */
 		for(int j = 0; j < parents.size(); j++){
-			//System.out.println("parents: " + Main.encodeGenom(parents.get(j).getGenom()) + "  eval: " + parents.get(j).getEvaluation());
 			sum += parents.get(j).getEvaluation();
-			//System.out.println(sum);
 			cpdist[j] = sum;
 		}
 		for(int j = 0; j < parents.size(); j++){
 			cpdist[j] /= sum;
 		}
-		//System.out.println(parents.size());
-		//System.out.println(cpdist[99]);
 		
 		/* SUS */
 		double r = rand.nextDouble();
@@ -148,9 +138,6 @@ public class GA {
 		});
 		Collections.reverse(matingPool);
 	
-		//for(int j = 0; j < matingPool.size(); j++){
-			//System.out.println("childs: " + Main.encodeGenom(matingPool.get(j).getGenom()) + "  eval: " + matingPool.get(j).getEvaluation());
-		//}
 		return matingPool;
 	}
 	
