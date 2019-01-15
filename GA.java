@@ -39,7 +39,6 @@ public class GA {
 		return result;
 	}
 
-	//
 	public double negotiation(Genom g){
 		double result = 0.0;	//評価値
 		ArrayList<Pair<Character, Integer>> selfishAgentPref = new ArrayList<>();
@@ -68,8 +67,8 @@ public class GA {
 
 		// (論点数の階乗 - (偽の効用 - 本来の効用))/論点数の階乗．
 		// 偽の効用が高くなるほど評価値が低くなる&評価値最大が1になるように正規化 
-		result = (factorial(MisrepresentationGame.ISSUE.size()) - Math.abs(mAgent.getFakeUtility() - mAgent.getUtility())) / factorial(MisrepresentationGame.ISSUE.size());
-
+		result = (factorial(MisrepresentationGame.ISSUE.size()) - Math.abs(mAgent.getFakeUtility() - mAgent.getUtility())) / (double)factorial(MisrepresentationGame.ISSUE.size());
+		
 		return result;
 	}
 

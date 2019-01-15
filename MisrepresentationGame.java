@@ -11,11 +11,7 @@ public class MisrepresentationGame {
 			char issue2 = ISSUE.get(i);
 			
 			System.out.println("agent1:" + agent1.compareIssue(issue1, issue2));
-			System.out.println("agent2:" + agent2.compareIssue(issue1, issue2));			
-		}
-		// 後出ししたらペナルティ
-		if(g.getGenom().get(0)){
-			agent2.setUtility(agent2.getUtility()-1);
+			System.out.println("agent2:" + agent2.compareIssue(issue1, issue2));
 		}
 	}
 
