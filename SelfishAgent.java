@@ -47,8 +47,10 @@ public class SelfishAgent implements Agent{
     	return result;    	
     }
     
-    public String compareIssue(char issue1, char issue2){
+    public Pair<String, Pair<Character, Character>> compareIssue(char issue1, char issue2){
+    	Pair<String, Pair<Character, Character>> result = new Pair<>();
     	ArrayList<Pair<Character, Integer>> partPref = new ArrayList<>();
+    	Pair<Character, Character> temp = new Pair<>();
     	char better = '?';
     	char worse = '?';
 
@@ -68,6 +70,10 @@ public class SelfishAgent implements Agent{
     		better = partPref.get(1).getLeft();
     		worse = partPref.get(0).getLeft();
     	}
-    	return String.valueOf(better) + " > " + String.valueOf(worse);
+    	result.setLeft(String.valueOf(better) + " > " + String.valueOf(worse));
+    	temp.setBoth(better, worse);
+    	result.setRight(temp);
+    	
+    	return result;
     }
 }

@@ -11,5 +11,8 @@ public interface Agent {
 	void setUtility(int utility);
 	
 	void calculateUtility(ArrayList<Character> issue);
-	String compareIssue(char issue1, char issue2);
+	
+	// left: 選好の好みを人間がわかりやすいようにStringで返す
+	// right: 選好をシステム的に推論するorderedなデータを返す
+	Pair<String, Pair<Character, Character>> compareIssue(char issue1, char issue2);
 }

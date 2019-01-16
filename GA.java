@@ -4,7 +4,7 @@ import java.util.Comparator;
 import java.util.Random;
 
 public class GA {	
-	final public static int GENOM_LENGTH = 1; //遺伝子の長さ
+	final public static int GENOM_LENGTH = 2; //遺伝子の長さ
 	final public static int GENOM_NUM = 1; //遺伝子の数
 	final public static int OFFSPRING_NUM = 1; //子孫の数
 	final public static double INDIVUDUAL_MUTATION_PROBABILITY = 0.1; //個体突然変異確率
