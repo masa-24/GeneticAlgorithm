@@ -1,17 +1,29 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class MisrepresentationGame {
 	final public static ArrayList<Character> ISSUE = new ArrayList<>(Arrays.asList('A', 'B', 'C'));
-
+	Random rand = new Random();
+	
 	public void preferenceElicitation(Agent agent1, Agent agent2, Genom g){
 		for(int i = 1; i < ISSUE.size(); i++){
 			// 比較する論点を指定
 			char issue1 = ISSUE.get(i-1);
 			char issue2 = ISSUE.get(i);
 			
-			System.out.println("agent1:" + agent1.compareIssue(issue1, issue2));
-			System.out.println("agent2:" + agent2.compareIssue(issue1, issue2));
+			if(g.getGenom().get(0)){ //遺伝子0番目：preferenceをrevealする順番のランダム化
+				if(rand.nextBoolean()){
+					System.out.println("agent1:" + agent1.compareIssue(issue1, issue2));
+					System.out.println("agent2:" + ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1));
+				}else{
+					System.out.println("agent2:" + agent2.compareIssue(issue1, issue2));
+					System.out.println("agent1:" + agent1.compareIssue(issue1, issue2));
+				}
+			}else{ //遺伝子0番目がfalseのときは毎回同じ順番で選好を公開
+				System.out.println("agent1:" + agent1.compareIssue(issue1, issue2));
+				System.out.println("agent2:" + ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1));
+			}
 		}
 	}
 
@@ -53,7 +65,7 @@ public class MisrepresentationGame {
 		preferenceElicitation(sAgent, mAgent, g);
 		deal(sAgent, mAgent, g);
 
-		result = 1.0 / (double)Math.abs((mAgent.getFakeUtility() - sAgent.getUtility())+1.0);
+		result = 1.0 / (double)(Math.abs(mAgent.getFakeUtility() - sAgent.getUtility()) + 1.0);
 		
 		return result;
 	}

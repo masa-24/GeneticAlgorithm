@@ -26,17 +26,18 @@ public class MisrepresentingAgent extends SelfishAgent{
 		}
 	}
 	
-	public String misrepresentation(char issue1, char issue2, Agent opponentAgent){
+	public String compareIssue(char issue1, char issue2, Agent opponentAgent){
     	ArrayList<Pair<Character, Integer>> partPref = new ArrayList<>();
     	char better = '?';
     	char worse = '?';
+    	
     	for(int i = 0; i < opponentAgent.getPreference().size(); i++){
     		if(issue1 == opponentAgent.getPreference().get(i).getLeft() || issue2 == opponentAgent.getPreference().get(i).getLeft()){
     			partPref.add(opponentAgent.getPreference().get(i));
     		}
     	}
     	if(partPref.size() != 2){
-    		System.out.println("何かおかしい");
+    		System.err.println("error: " + partPref + ", partPref.size:" + partPref.size());
     		System.exit(-1);
     	}
     	if(Math.max(partPref.get(0).getRight(), partPref.get(1).getRight()) == partPref.get(0).getRight()){
