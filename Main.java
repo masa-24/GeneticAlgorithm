@@ -16,8 +16,7 @@ public class Main {
 		ArrayList<Genom> nextGenerationIndividualGroup = new ArrayList<>(); //次世代個体集団
 		for(int count = 1; count < GA.MAX_GENERATION+1; count++){
 			for(int i = 0; i < currentGenerationIndividualGroup.size(); i++){
-				//double eval = ga.evaluation(currentGenerationIndividualGroup.get(i));
-				double eval = ga.negotiation(currentGenerationIndividualGroup.get(i));
+				double eval = ga.evaluation(currentGenerationIndividualGroup.get(i));
 				currentGenerationIndividualGroup.get(i).setEvaluation(eval); //現行世代のi番目の遺伝子に評価値を設定
 			}
 			System.out.println("交渉問題なし．終了します");

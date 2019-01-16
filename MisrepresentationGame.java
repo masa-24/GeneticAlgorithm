@@ -27,4 +27,34 @@ public class MisrepresentationGame {
 		agent2.calculateUtility(item2);	// Misrepresenting agentの本来の効用を計算
 		agent2.calculateFakeUtility(item2, agent1);	// Misrepresenting agentの見せかけの効用を計算
 	}
+	
+	public double negotiation(Genom g){
+		double result = 0.0;	//評価値
+		ArrayList<Pair<Character, Integer>> selfishAgentPref = new ArrayList<>();
+		ArrayList<Pair<Character, Integer>> misrepresentingAgentPref = new ArrayList<>();
+		
+		// 自己中心的なエージェントの選好を用意
+		for(int i = 0; i < ISSUE.size(); i++){
+			Pair<Character, Integer> temp = new Pair<>();
+			temp.setBoth(ISSUE.get(i), i+1);
+			selfishAgentPref.add(temp);
+		}
+		// Misrepresenting agentの選好を用意
+		for(int i = 0; i < ISSUE.size(); i++){
+			Pair<Character, Integer> temp = new Pair<>();
+			temp.setBoth(ISSUE.get(i), ISSUE.size()-i);
+			misrepresentingAgentPref.add(temp);
+		}
+		
+		// エージェント生成
+		SelfishAgent sAgent = new SelfishAgent(selfishAgentPref);
+		MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
+		
+		preferenceElicitation(sAgent, mAgent, g);
+		deal(sAgent, mAgent, g);
+
+		result = 1.0 / (double)Math.abs((mAgent.getFakeUtility() - sAgent.getUtility())+1.0);
+		
+		return result;
+	}
 }

@@ -27,6 +27,7 @@ public class GA {
 	//評価関数
 	// TODO ラムダ式を渡せるように
 	public double evaluation(Genom g){
+		/*
 		int sum = 0;
 		double result = 0.0;
 		
@@ -34,55 +35,16 @@ public class GA {
 			if(g.getGenom().get(i)) sum++;
 		}
 		result = sum / (double)GENOM_LENGTH;
-		//System.out.println("sum :" + sum + ", " + "result : " + result);
 		
 		return result;
-	}
-
-	public double negotiation(Genom g){
-		double result = 0.0;	//評価値
-		ArrayList<Pair<Character, Integer>> selfishAgentPref = new ArrayList<>();
-		ArrayList<Pair<Character, Integer>> misrepresentingAgentPref = new ArrayList<>();
+		*/
 		MisrepresentationGame mg = new MisrepresentationGame();
-		
-		// 自己中心的なエージェントの選好を用意
-		for(int i = 0; i < MisrepresentationGame.ISSUE.size(); i++){
-			Pair<Character, Integer> temp = new Pair<>();
-			temp.setBoth(MisrepresentationGame.ISSUE.get(i), i+1);
-			selfishAgentPref.add(temp);
-		}
-		// Misrepresenting agentの選好を用意
-		for(int i = 0; i < MisrepresentationGame.ISSUE.size(); i++){
-			Pair<Character, Integer> temp = new Pair<>();
-			temp.setBoth(MisrepresentationGame.ISSUE.get(i), MisrepresentationGame.ISSUE.size()-i);
-			misrepresentingAgentPref.add(temp);
-		}
-		
-		// エージェント生成
-		SelfishAgent sAgent = new SelfishAgent(selfishAgentPref);
-		MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
-		
-		mg.preferenceElicitation(sAgent, mAgent, g);
-		mg.deal(sAgent, mAgent, g);
-
-		// (論点数の階乗 - (偽の効用 - 本来の効用))/論点数の階乗．
-		// 偽の効用が高くなるほど評価値が低くなる&評価値最大が1になるように正規化 
-		result = (factorial(MisrepresentationGame.ISSUE.size()) - Math.abs(mAgent.getFakeUtility() - mAgent.getUtility())) / (double)factorial(MisrepresentationGame.ISSUE.size());
-		
-		return result;
-	}
-
-	public int factorial(int x){
-		if(x > 0){
-			return x + factorial(x-1);
-		}else{
-			return 0;
-		}
+		return mg.negotiation(g);
 	}
 	
 	//選択関数(エリート主義)
 	/*
-	public ArrayList<Genom> selection(ArrayList<Genom> genomGroup){
+	public ArrayList<Genom> eliteSelection(ArrayList<Genom> genomGroup){
 		ArrayList<Genom> elite = new ArrayList<>();
 		
 		Collections.sort(genomGroup, new Comparator<Genom>() {
@@ -92,7 +54,7 @@ public class GA {
 		});
 		Collections.reverse(genomGroup);
 		
-		for(int i = 0; i < selectGenom; i++){
+		for(int i = 0; i < OFFSPRING_NUM; i++){
 			elite.add(genomGroup.get(i));
 		}
 		
