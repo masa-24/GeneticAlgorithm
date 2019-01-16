@@ -20,6 +20,9 @@ public class MisrepresentationGame {
 					System.out.println("agent2:" + agent2.compareIssue(issue1, issue2));
 					System.out.println("agent1:" + agent1.compareIssue(issue1, issue2));
 				}
+			}else if(g.getGenom().get(1)){ //遺伝子1番目：同時に選好を公開
+				System.out.println("agent1:" + agent1.compareIssue(issue1, issue2));
+				System.out.println("agent2:" + agent2.compareIssue(issue1, issue2));				
 			}else{ //遺伝子0番目がfalseのときは毎回同じ順番で選好を公開
 				System.out.println("agent1:" + agent1.compareIssue(issue1, issue2));
 				System.out.println("agent2:" + ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1));
