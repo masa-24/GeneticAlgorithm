@@ -9,6 +9,8 @@ public class MisrepresentationGame {
 	ArrayList<Pair<Character, Integer>> MisrepresentingAgentRevealedPreference = new ArrayList<>();
 	
 	public void preferenceElicitation(Agent agent1, Agent agent2, Genom g){
+		int count = 0;
+		
 		for(int i = 0; i < ISSUE.size(); i++){
 			for(int j = i+1; j < ISSUE.size(); j++){
 				// 比較する論点を指定
@@ -34,7 +36,20 @@ public class MisrepresentationGame {
 					agent2revealed = agent2.compareIssue(issue1, issue2);
 					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
 					System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
-				}else{ //遺伝子0番目がfalseのときは毎回同じ順番で選好を公開
+				}else if(g.getGenom().get(2)){ //遺伝子2番目：交互に選好を公開
+					if(count%2 == 0){
+						agent1revealed = agent1.compareIssue(issue1, issue2);
+						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
+						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");						
+					}else{
+						agent1revealed = agent1.compareIssue(issue1, issue2);
+						agent2revealed = agent2.compareIssue(issue1, issue2);
+						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());						
+					}
+					count++;
+				}else{ //デフォルトは毎回同じ順番で選好を公開
 					agent1revealed = agent1.compareIssue(issue1, issue2);
 					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
 					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
