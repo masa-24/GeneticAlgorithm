@@ -47,12 +47,11 @@ public class SelfishAgent implements Agent{
     	return result;    	
     }
     
-    public Pair<String, Pair<Character, Character>> compareIssue(char issue1, char issue2){
-    	Pair<String, Pair<Character, Character>> result = new Pair<>();
+    public Pair<Character, Character> compareIssue(char issue1, char issue2){
+    	Pair<Character, Character> result = new Pair<>();
     	ArrayList<Pair<Character, Integer>> partPref = new ArrayList<>();
-    	Pair<Character, Character> temp = new Pair<>();
-    	char better = '?';
-    	char worse = '?';
+    	char higher = '?';
+    	char lower = '?';
 
     	for(int i = 0; i < preference.size(); i++){
     		if(issue1 == preference.get(i).getLeft() || issue2 == preference.get(i).getLeft()){
@@ -64,15 +63,13 @@ public class SelfishAgent implements Agent{
     		System.exit(-1);
     	}
     	if(Math.max(partPref.get(0).getRight(), partPref.get(1).getRight()) == partPref.get(0).getRight()){
-    		better = partPref.get(0).getLeft();
-    		worse = partPref.get(1).getLeft();
+    		higher = partPref.get(0).getLeft();
+    		lower = partPref.get(1).getLeft();
     	}else{
-    		better = partPref.get(1).getLeft();
-    		worse = partPref.get(0).getLeft();
+    		higher = partPref.get(1).getLeft();
+    		lower = partPref.get(0).getLeft();
     	}
-    	result.setLeft(String.valueOf(better) + " > " + String.valueOf(worse));
-    	temp.setBoth(better, worse);
-    	result.setRight(temp);
+    	result.setBoth(higher, lower);
     	
     	return result;
     }

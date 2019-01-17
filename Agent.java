@@ -12,7 +12,7 @@ public interface Agent {
 	
 	void calculateUtility(ArrayList<Character> issue);
 	
-	// left: 選好の好みを人間がわかりやすいようにStringで返す
-	// right: 選好をシステム的に推論するorderedなデータを返す
-	Pair<String, Pair<Character, Character>> compareIssue(char issue1, char issue2);
+	// left: 選好の重みが高い方
+	// right: 選好の重みが低い方
+	Pair<Character, Character> compareIssue(char issue1, char issue2);
 }

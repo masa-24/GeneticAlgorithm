@@ -14,36 +14,37 @@ public class MisrepresentationGame {
 				// 比較する論点を指定
 				char issue1 = ISSUE.get(i);
 				char issue2 = ISSUE.get(j);
-				Pair<String, Pair<Character, Character>> agent1revealed = new Pair<>();
-				Pair<String, Pair<Character, Character>> agent2revealed = new Pair<>();
+				Pair<Character, Character> agent1revealed = new Pair<>();
+				Pair<Character, Character> agent2revealed = new Pair<>();
 				
 				if(g.getGenom().get(0)){ //遺伝子0番目：preferenceをrevealする順番のランダム化
 					if(rand.nextBoolean()){
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-						System.out.println("agent1: " + agent1revealed.getLeft());
-						System.out.println("agent2: " + agent2revealed.getLeft() + " (misrepresent)");
+						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
 					}else{
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = agent2.compareIssue(issue1, issue2);
-						System.out.println("agent2: " + agent2revealed.getLeft());
-						System.out.println("agent1: " + agent1revealed.getLeft());
+						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
 					}
 				}else if(g.getGenom().get(1)){ //遺伝子1番目：同時に選好を公開
 					agent1revealed = agent1.compareIssue(issue1, issue2);
 					agent2revealed = agent2.compareIssue(issue1, issue2);
-					System.out.println("agent1: " + agent1revealed.getLeft());
-					System.out.println("agent2: " + agent2revealed.getLeft());				
+					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+					System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 				}else{ //遺伝子0番目がfalseのときは毎回同じ順番で選好を公開
 					agent1revealed = agent1.compareIssue(issue1, issue2);
 					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-					System.out.println("agent1: " + agent1revealed.getLeft());
-					System.out.println("agent2: " + agent2revealed.getLeft() + " (misrepresent)");
+					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+					System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
 				}
-				reasoning(agent1revealed.getRight(), SelfishAgentRevealedPreference);
-				reasoning(agent2revealed.getRight(), MisrepresentingAgentRevealedPreference);				
+				reasoning(agent1revealed, SelfishAgentRevealedPreference);
+				reasoning(agent2revealed, MisrepresentingAgentRevealedPreference);				
 			}
 		}
+		/*
 		System.out.println("自己中心的エージェント--------");
 		for(int i = 0; i < SelfishAgentRevealedPreference.size(); i++){
 			System.out.println(SelfishAgentRevealedPreference.get(i).getLeft() + ", " + SelfishAgentRevealedPreference.get(i).getRight());
@@ -52,6 +53,7 @@ public class MisrepresentationGame {
 		for(int i = 0; i < MisrepresentingAgentRevealedPreference.size(); i++){
 			System.out.println(MisrepresentingAgentRevealedPreference.get(i).getLeft() + ", " + MisrepresentingAgentRevealedPreference.get(i).getRight());
 		}
+		*/
 	}
 
 	public void deal(Agent agent1, MisrepresentingAgent agent2, Genom g){
