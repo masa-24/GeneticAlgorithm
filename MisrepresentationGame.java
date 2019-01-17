@@ -9,40 +9,41 @@ public class MisrepresentationGame {
 	ArrayList<Pair<Character, Integer>> MisrepresentingAgentRevealedPreference = new ArrayList<>();
 	
 	public void preferenceElicitation(Agent agent1, Agent agent2, Genom g){
-		for(int i = 1; i < ISSUE.size(); i++){
-			// 比較する論点を指定
-			char issue1 = ISSUE.get(i-1);
-			char issue2 = ISSUE.get(i);
-			Pair<String, Pair<Character, Character>> agent1revealed = new Pair<>();
-			Pair<String, Pair<Character, Character>> agent2revealed = new Pair<>();
-			
-			if(g.getGenom().get(0)){ //遺伝子0番目：preferenceをrevealする順番のランダム化
-				if(rand.nextBoolean()){
-					agent1revealed = agent1.compareIssue(issue1, issue2);
-					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-					System.out.println("agent1:" + agent1revealed.getLeft());
-					System.out.println("agent2:" + agent2revealed.getLeft());
-				}else{
+		for(int i = 0; i < ISSUE.size(); i++){
+			for(int j = i+1; j < ISSUE.size(); j++){
+				// 比較する論点を指定
+				char issue1 = ISSUE.get(i);
+				char issue2 = ISSUE.get(j);
+				Pair<String, Pair<Character, Character>> agent1revealed = new Pair<>();
+				Pair<String, Pair<Character, Character>> agent2revealed = new Pair<>();
+				
+				if(g.getGenom().get(0)){ //遺伝子0番目：preferenceをrevealする順番のランダム化
+					if(rand.nextBoolean()){
+						agent1revealed = agent1.compareIssue(issue1, issue2);
+						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
+						System.out.println("agent1: " + agent1revealed.getLeft());
+						System.out.println("agent2: " + agent2revealed.getLeft() + " (misrepresent)");
+					}else{
+						agent1revealed = agent1.compareIssue(issue1, issue2);
+						agent2revealed = agent2.compareIssue(issue1, issue2);
+						System.out.println("agent2: " + agent2revealed.getLeft());
+						System.out.println("agent1: " + agent1revealed.getLeft());
+					}
+				}else if(g.getGenom().get(1)){ //遺伝子1番目：同時に選好を公開
 					agent1revealed = agent1.compareIssue(issue1, issue2);
 					agent2revealed = agent2.compareIssue(issue1, issue2);
-					System.out.println("agent2:" + agent2revealed.getLeft());
-					System.out.println("agent1:" + agent1revealed.getLeft());
+					System.out.println("agent1: " + agent1revealed.getLeft());
+					System.out.println("agent2: " + agent2revealed.getLeft());				
+				}else{ //遺伝子0番目がfalseのときは毎回同じ順番で選好を公開
+					agent1revealed = agent1.compareIssue(issue1, issue2);
+					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
+					System.out.println("agent1: " + agent1revealed.getLeft());
+					System.out.println("agent2: " + agent2revealed.getLeft() + " (misrepresent)");
 				}
-			}else if(g.getGenom().get(1)){ //遺伝子1番目：同時に選好を公開
-				agent1revealed = agent1.compareIssue(issue1, issue2);
-				agent2revealed = agent2.compareIssue(issue1, issue2);
-				System.out.println("agent1:" + agent1revealed.getLeft());
-				System.out.println("agent2:" + agent2revealed.getLeft());				
-			}else{ //遺伝子0番目がfalseのときは毎回同じ順番で選好を公開
-				agent1revealed = agent1.compareIssue(issue1, issue2);
-				agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-				System.out.println("agent1:" + agent1revealed.getLeft());
-				System.out.println("agent2:" + agent2revealed.getLeft());
+				reasoning(agent1revealed.getRight(), SelfishAgentRevealedPreference);
+				reasoning(agent2revealed.getRight(), MisrepresentingAgentRevealedPreference);				
 			}
-			reasoning(agent1revealed.getRight(), SelfishAgentRevealedPreference);
-			reasoning(agent2revealed.getRight(), MisrepresentingAgentRevealedPreference);
 		}
-		/*
 		System.out.println("自己中心的エージェント--------");
 		for(int i = 0; i < SelfishAgentRevealedPreference.size(); i++){
 			System.out.println(SelfishAgentRevealedPreference.get(i).getLeft() + ", " + SelfishAgentRevealedPreference.get(i).getRight());
@@ -51,7 +52,6 @@ public class MisrepresentationGame {
 		for(int i = 0; i < MisrepresentingAgentRevealedPreference.size(); i++){
 			System.out.println(MisrepresentingAgentRevealedPreference.get(i).getLeft() + ", " + MisrepresentingAgentRevealedPreference.get(i).getRight());
 		}
-		*/
 	}
 
 	public void deal(Agent agent1, MisrepresentingAgent agent2, Genom g){
@@ -112,8 +112,8 @@ public class MisrepresentationGame {
 		}
 		
 		if(higherIndex != -1 && lowerIndex != -1){
-			//矛盾していた場合
 			if(revealedPref.get(higherIndex).getRight() < revealedPref.get(lowerIndex).getRight()){
+				// 既に宣言した選好について述べていて，かつ既に宣言したものと矛盾する選好であった場合
 				int highValue = revealedPref.get(higherIndex).getRight();
 				int lowValue = revealedPref.get(lowerIndex).getRight();
 
@@ -121,9 +121,40 @@ public class MisrepresentationGame {
 				lower.setBoth(p.getLeft(), lowValue);
 				revealedPref.set(higherIndex, higher);
 				revealedPref.set(lowerIndex, lower);
+			}else if(revealedPref.get(higherIndex).getRight() == revealedPref.get(lowerIndex).getRight()){
+				// 既に宣言した選好について述べていて，処理的におかしい部分を見つけた場合
+				boolean isExistLowerValue = false;
+				boolean isExistHigherValue = false;
+				
+				// 順番がおかしくならないように，どう調整すればいいか調べる
+				for(int i = 0; i < revealedPref.size(); i++){
+					if(revealedPref.get(i).getRight() == revealedPref.get(higherIndex).getRight()+1){
+						isExistHigherValue = true;
+					}
+					if(revealedPref.get(i).getRight() == revealedPref.get(lowerIndex).getRight()-1){
+						isExistLowerValue = true;
+					}
+				}
+				
+				if(isExistHigherValue && !isExistLowerValue){ // 重みが高いほうが既に存在していた場合
+					lower.setBoth(p.getRight(), revealedPref.get(lowerIndex).getRight()-1);
+					revealedPref.set(lowerIndex, lower);					
+				}else if(!isExistHigherValue && isExistLowerValue){ // 低いほうが既に存在していた場合
+					higher.setBoth(p.getLeft(), revealedPref.get(higherIndex).getRight()+1);
+					revealedPref.set(higherIndex, higher);					
+				}else{
+					System.err.println("isExistHigherValue: " + isExistHigherValue + ", isExistLowerValue: " + isExistLowerValue);
+					System.exit(-1);
+				}				
 			}
 		}else if(higherIndex != -1 && lowerIndex == -1){
-			//選好の重みが高い方が存在し，低い方が存在しない場合，高い方-1の値とともに格納する
+			// 選好の重みが高い方が存在し，低い方が存在しない場合，高い方-1の値とともに格納する
+			// 重みの値がずれないようにまず全体を+1する
+			for(int i = 0; i < revealedPref.size(); i++){
+				Pair<Character, Integer> temp = new Pair<>();
+				temp.setBoth(revealedPref.get(i).getLeft(), revealedPref.get(i).getRight()+1);
+				revealedPref.set(i, temp);
+			}
 			lower.setBoth(p.getRight(), revealedPref.get(higherIndex).getRight()-1);
 			revealedPref.add(lower);
 		}else if(higherIndex == -1 && lowerIndex != -1){
