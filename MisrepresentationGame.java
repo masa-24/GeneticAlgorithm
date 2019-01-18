@@ -71,23 +71,8 @@ public class MisrepresentationGame {
 		}
 		*/
 	}
-
-	/*
-	public void deal(Agent agent1, MisrepresentingAgent agent2, Genom g){
-		ArrayList<Character> item1 = new ArrayList<>();
-		ArrayList<Character> item2 = new ArrayList<>();
-		
-		item1.add(ISSUE.get(0));
-		item2.add(ISSUE.get(1));
-		item2.add(ISSUE.get(2));
-		
-		agent1.calculateUtility(item1); // Selfish agentの効用を計算
-		agent2.calculateUtility(item2);	// Misrepresenting agentの本来の効用を計算
-		agent2.calculateFakeUtility(item2, agent1);	// Misrepresenting agentの見せかけの効用を計算
-	}
-	*/
 	
-	public Pair<Integer, Integer> deal(Genom g){
+	public Pair<Integer, Integer> deal(Agent agent1, Agent agent2, Genom g){
 		Pair<Integer, Integer> result = new Pair<>();
 		
 		permutation(arrayListToString(ISSUE), "");
@@ -98,6 +83,10 @@ public class MisrepresentationGame {
 				
 				int agent1Util = calcUtil(SelfishAgentRevealedPreference, item1);
 				int agent2Util = calcUtil(MisrepresentingAgentRevealedPreference, item2);
+				if(g.getGenom().get(3)){ //遺伝子3番目：嘘ついてもバレる
+					agent1Util = calcUtil(agent1.getPreference(), item1);
+					agent2Util = calcUtil(agent2.getPreference(), item2);
+				}
 				//System.err.println("agent1 recieved: " + item1 + ", agent1 utility: " + agent1Util);
 				//System.err.println("agent2 recieved: " + item2 + ", agent2 utility: " + agent2Util);
 				//System.err.println("-------------------------------------------");
@@ -179,8 +168,7 @@ public class MisrepresentationGame {
 		MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
 		
 		preferenceElicitation(sAgent, mAgent, g);
-		//deal(sAgent, mAgent, g);
-		Pair<Integer, Integer> utility = deal(g);
+		Pair<Integer, Integer> utility = deal(sAgent, mAgent, g);
 
 		result = 1.0 / (double)(Math.abs(utility.getRight() - utility.getLeft()) + 1.0);
 		
