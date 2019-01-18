@@ -25,14 +25,18 @@ public class SelfishAgent implements Agent{
         this.utility = utility;
     }
 
-    public void calculateUtility(ArrayList<Character> issue){
+    public int calculateUtility(ArrayList<Character> issue){
+    	int result = 0;
+    	
     	for(int i = 0; i < issue.size(); i++){
     		for(int j = 0; j < preference.size(); j++){
     			if(issue.get(i) == preference.get(j).getLeft()){
-    				utility += preference.get(j).getRight();
+    				result += preference.get(j).getRight();
     			}
     		}
     	}
+    	
+    	return result;
 	}
     
     // デバッグ用

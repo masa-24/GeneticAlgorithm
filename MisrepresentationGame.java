@@ -7,6 +7,7 @@ public class MisrepresentationGame {
 	Random rand = new Random();
 	ArrayList<Pair<Character, Integer>> SelfishAgentRevealedPreference = new ArrayList<>();
 	ArrayList<Pair<Character, Integer>> MisrepresentingAgentRevealedPreference = new ArrayList<>();
+	ArrayList<String> issuePermutation = new ArrayList<>();
 	
 	public void preferenceElicitation(Agent agent1, Agent agent2, Genom g){
 		int count = 0;
@@ -71,6 +72,7 @@ public class MisrepresentationGame {
 		*/
 	}
 
+	/*
 	public void deal(Agent agent1, MisrepresentingAgent agent2, Genom g){
 		ArrayList<Character> item1 = new ArrayList<>();
 		ArrayList<Character> item2 = new ArrayList<>();
@@ -78,10 +80,80 @@ public class MisrepresentationGame {
 		item1.add(ISSUE.get(0));
 		item2.add(ISSUE.get(1));
 		item2.add(ISSUE.get(2));
-				
+		
 		agent1.calculateUtility(item1); // Selfish agentの効用を計算
 		agent2.calculateUtility(item2);	// Misrepresenting agentの本来の効用を計算
 		agent2.calculateFakeUtility(item2, agent1);	// Misrepresenting agentの見せかけの効用を計算
+	}
+	*/
+	
+	public Pair<Integer, Integer> deal(Genom g){
+		Pair<Integer, Integer> result = new Pair<>();
+		
+		permutation(arrayListToString(ISSUE), "");
+		for(int i = 0; i < issuePermutation.size(); i++){
+			for(int j  = 1; j < ISSUE.size()-1; j++){
+				ArrayList<Character> item1 = stringToArrayList(issuePermutation.get(i).substring(0, j));
+				ArrayList<Character> item2 = stringToArrayList(issuePermutation.get(i).substring(j));
+				
+				int agent1Util = calcUtil(SelfishAgentRevealedPreference, item1);
+				int agent2Util = calcUtil(MisrepresentingAgentRevealedPreference, item2);
+				//System.err.println("agent1 recieved: " + item1 + ", agent1 utility: " + agent1Util);
+				//System.err.println("agent2 recieved: " + item2 + ", agent2 utility: " + agent2Util);
+				//System.err.println("-------------------------------------------");
+				if(agent1Util == agent2Util){
+					result.setBoth(agent1Util, agent2Util);
+					return result;
+				}
+			}
+		}
+		result.setBoth(0, 0);
+		return result;
+	}
+	
+	//論点の分配パターンの組み合わせを計算
+	public void permutation(String q, String ans){	
+		if(q.length() <= 1){
+			//System.out.println(ans + q);
+			issuePermutation.add(ans + q);
+		}else{
+			for(int i = 0; i < q.length(); i++){
+				permutation(q.substring(0, i) + q.substring(i+1), ans + q.charAt(i));
+			}
+		}
+	}
+	
+	public String arrayListToString(ArrayList<Character> list){
+		String s = "";
+		
+		for(int i = 0; i < list.size(); i++){
+			s += list.get(i);
+		}
+		
+		return s;
+	}
+	
+	public ArrayList<Character> stringToArrayList(String s){
+		ArrayList<Character> list = new ArrayList<>();
+		
+		for(int i = 0; i < s.length(); i++){
+			list.add(s.charAt(i));
+		}
+		
+		return list;
+	}
+	
+	public int calcUtil(ArrayList<Pair<Character, Integer>> pref, ArrayList<Character> portion){
+		int utility = 0;
+		
+		for(int i = 0; i < portion.size(); i++){
+			for(int j = 0; j < pref.size(); j++){
+				if(portion.get(i) == pref.get(j).getLeft()){
+					utility += pref.get(j).getRight();
+				}
+			}
+		}
+		return utility;
 	}
 	
 	public double negotiation(Genom g){
@@ -107,13 +179,16 @@ public class MisrepresentationGame {
 		MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
 		
 		preferenceElicitation(sAgent, mAgent, g);
-		deal(sAgent, mAgent, g);
+		//deal(sAgent, mAgent, g);
+		Pair<Integer, Integer> utility = deal(g);
 
-		result = 1.0 / (double)(Math.abs(mAgent.getFakeUtility() - sAgent.getUtility()) + 1.0);
+		result = 1.0 / (double)(Math.abs(utility.getRight() - utility.getLeft()) + 1.0);
 		
+		System.out.println("result: " + result + ", agent1: " + utility.getLeft() + ", agent2: " + utility.getRight());
 		return result;
 	}
 	
+	//公開された選好から全体の選好を推定する関数
 	public void reasoning(Pair<Character, Character> p, ArrayList<Pair<Character, Integer>> revealedPref){
 		Pair<Character, Integer> higher = new Pair<>();
 		Pair<Character, Integer> lower = new Pair<>();

@@ -16,14 +16,18 @@ public class MisrepresentingAgent extends SelfishAgent{
 		fakeUtility = utility;
 	}
 	
-	public void calculateFakeUtility(ArrayList<Character> issue, Agent opponentAgent){
+	public int calculateFakeUtility(ArrayList<Character> issue, Agent opponentAgent){
+		int result = 0;
+		
 		for(int i = 0; i < issue.size(); i++){
 			for(int j = 0; j < opponentAgent.getPreference().size(); j++){
 				if(issue.get(i) == opponentAgent.getPreference().get(j).getLeft()){
-					fakeUtility += opponentAgent.getPreference().get(j).getRight();
+					result += opponentAgent.getPreference().get(j).getRight();
 				}
 			}
 		}
+		
+		return result;
 	}
 	
 	public Pair<Character, Character> compareIssue(char issue1, char issue2, Agent opponentAgent){

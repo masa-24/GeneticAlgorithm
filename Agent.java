@@ -10,7 +10,7 @@ public interface Agent {
 	int getUtility();
 	void setUtility(int utility);
 	
-	void calculateUtility(ArrayList<Character> issue);
+	int calculateUtility(ArrayList<Character> issue);
 	
 	// left: 選好の重みが高い方
 	// right: 選好の重みが低い方

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Main {	
+public class Main {
 	public static void main(String[] args){
 		GA ga = new GA();
 
