@@ -26,6 +26,12 @@ public class MisrepresentationGame {
 						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
 						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
 						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
+						if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
+							agent2revealed = agent2.compareIssue(issue1, issue2);
+							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+						}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
+							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+						}
 					}else{
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = agent2.compareIssue(issue1, issue2);
@@ -42,7 +48,13 @@ public class MisrepresentationGame {
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
 						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
-						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");						
+						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
+						if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
+							agent2revealed = agent2.compareIssue(issue1, issue2);
+							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+						}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
+							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+						}
 					}else{
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = agent2.compareIssue(issue1, issue2);
@@ -55,6 +67,12 @@ public class MisrepresentationGame {
 					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
 					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
 					System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
+					if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
+						agent2revealed = agent2.compareIssue(issue1, issue2);
+						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+					}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
+						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+					}
 				}
 				reasoning(agent1revealed, SelfishAgentRevealedPreference);
 				reasoning(agent2revealed, MisrepresentingAgentRevealedPreference);				
