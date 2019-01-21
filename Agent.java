@@ -15,4 +15,6 @@ public interface Agent {
 	// left: 選好の重みが高い方
 	// right: 選好の重みが低い方
 	Pair<Character, Character> compareIssue(char issue1, char issue2);
+	//x番目に好みな選好を返す
+	char compareIssue(int x);
 }

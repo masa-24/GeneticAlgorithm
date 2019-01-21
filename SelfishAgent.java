@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class SelfishAgent implements Agent{
 	private ArrayList<Pair<Character, Integer>> preference = new ArrayList<>();
@@ -76,5 +78,22 @@ public class SelfishAgent implements Agent{
     	result.setBoth(higher, lower);
     	
     	return result;
+    }
+    
+    public char compareIssue(int x){
+    	//選好を重み順にソート
+    	Collections.sort(preference, new Comparator<Pair<Character, Integer>>() {
+    		public int compare(Pair<Character, Integer> pref1, Pair<Character, Integer> pref2){
+    			return pref1.getRight() - pref2.getRight();
+    		}
+		});
+    	Collections.reverse(preference);
+    	
+    	for(int i = 0; i < MisrepresentationGame.ISSUE.size(); i++){
+    		if(x == preference.get(i).getRight()){
+    			return preference.get(i).getLeft();
+    		}
+    	}
+    	return ' ';
     }
 }

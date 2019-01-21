@@ -33,4 +33,8 @@ public class MisrepresentingAgent extends SelfishAgent{
 	public Pair<Character, Character> compareIssue(char issue1, char issue2, Agent opponentAgent){
 		return opponentAgent.compareIssue(issue1, issue2);
 	}
+	
+	public char compareIssue(int x, Agent opponentAgent){
+		return ((SelfishAgent)opponentAgent).compareIssue(x);
+	}
 }

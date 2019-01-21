@@ -98,6 +98,81 @@ public class MisrepresentationGame {
 		*/
 	}
 	
+	//選好を好きなものから1つづつ公開する
+	public void singlePreferenceElicitation(Agent agent1, Agent agent2, Genom g){
+		int count = 0;
+
+		for(int i = ISSUE.size(); i > 0; i--){
+			char agent1revealed;
+			char agent2revealed;
+
+			if(g.getGenom().get(0)){ //遺伝子0番目：preferenceをrevealする順番のランダム化
+				if(rand.nextBoolean()){
+					agent1revealed = agent1.compareIssue(i);
+					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
+					System.out.println("agent1: " + agent1revealed);
+					System.out.println("agent2: " + agent2revealed + " (misrepresent)");
+					if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
+						agent2revealed = agent2.compareIssue(i);
+						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+					}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
+						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+					}
+				}else{
+					agent1revealed = agent1.compareIssue(i);
+					agent2revealed = agent2.compareIssue(i);
+					System.out.println("agent2: " + agent2revealed);
+					System.out.println("agent1: " + agent1revealed);
+					if(g.getGenom().get(6)){ //遺伝子6番目：preference言い直し機構
+						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
+						System.out.println("agent2 rerevealed: " + agent2revealed);
+					}
+				}
+			}else if(g.getGenom().get(1)){ //遺伝子1番目：同時に選好を公開
+				agent1revealed = agent1.compareIssue(i);
+				agent2revealed = agent2.compareIssue(i);
+				System.out.println("agent1: " + agent1revealed);
+				System.out.println("agent2: " + agent2revealed);
+			}else if(g.getGenom().get(2)){ //遺伝子2番目：交互に選好を公開
+				if(count%2 == 0){
+					agent1revealed = agent1.compareIssue(i);
+					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
+					System.out.println("agent1: " + agent1revealed);
+					System.out.println("agent2: " + agent2revealed + " (misrepresent)");
+					if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
+						agent2revealed = agent2.compareIssue(i);
+						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+					}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
+						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+					}
+				}else{
+					agent1revealed = agent1.compareIssue(i);
+					agent2revealed = agent2.compareIssue(i);
+					System.out.println("agent2: " + agent2revealed);
+					System.out.println("agent1: " + agent1revealed);						
+					if(g.getGenom().get(6)){ //遺伝子6番目：preference言い直し機構
+						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
+						System.out.println("agent2 rerevealed: " + agent2revealed);
+					}
+				}
+				count++;
+			}else{ //デフォルトは毎回同じ順番で選好を公開
+				agent1revealed = agent1.compareIssue(i);
+				agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
+				System.out.println("agent1: " + agent1revealed);
+				System.out.println("agent2: " + agent2revealed + " (misrepresent)");
+				if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
+					agent2revealed = agent2.compareIssue(i);
+					System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+				}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
+					System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+				}
+			}
+			reasoning(agent1revealed, i, SelfishAgentRevealedPreference);
+			reasoning(agent2revealed, i, MisrepresentingAgentRevealedPreference);
+		}
+	}
+	
 	public Pair<Integer, Integer> deal(Agent agent1, Agent agent2, Genom g){
 		Pair<Integer, Integer> result = new Pair<>();
 		
@@ -193,7 +268,11 @@ public class MisrepresentationGame {
 		SelfishAgent sAgent = new SelfishAgent(selfishAgentPref);
 		MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
 		
-		preferenceElicitation(sAgent, mAgent, g);
+		if(g.getGenom().get(7)){
+			singlePreferenceElicitation(sAgent, mAgent, g);
+		}else{
+			preferenceElicitation(sAgent, mAgent, g);			
+		}
 		Pair<Integer, Integer> utility = deal(sAgent, mAgent, g);
 
 		result = 1.0 / (double)(Math.abs(utility.getRight() - utility.getLeft()) + 1.0);
@@ -273,5 +352,12 @@ public class MisrepresentationGame {
 			revealedPref.add(higher);
 			revealedPref.add(lower);
 		}
+	}
+
+	//論点1個ずつ公開するとき用の推論機構
+	public void reasoning(char issue, int weight, ArrayList<Pair<Character, Integer>> revealedPref){
+		Pair<Character, Integer> p = new Pair<>();
+		p.setBoth(issue, weight);
+		revealedPref.add(p);
 	}
 }
