@@ -37,6 +37,10 @@ public class MisrepresentationGame {
 						agent2revealed = agent2.compareIssue(issue1, issue2);
 						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+						if(g.getGenom().get(6)){ //遺伝子6番目：preference言い直し機構
+							agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
+							System.out.println("agent2 rerevealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+						}
 					}
 				}else if(g.getGenom().get(1)){ //遺伝子1番目：同時に選好を公開
 					agent1revealed = agent1.compareIssue(issue1, issue2);
@@ -60,6 +64,10 @@ public class MisrepresentationGame {
 						agent2revealed = agent2.compareIssue(issue1, issue2);
 						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());						
+						if(g.getGenom().get(6)){ //遺伝子6番目：preference言い直し機構
+							agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
+							System.out.println("agent2 rerevealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+						}
 					}
 					count++;
 				}else{ //デフォルトは毎回同じ順番で選好を公開
