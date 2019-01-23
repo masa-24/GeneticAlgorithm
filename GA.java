@@ -4,12 +4,12 @@ import java.util.Comparator;
 import java.util.Random;
 
 public class GA {	
-	final public static int GENOM_LENGTH = 3; //遺伝子の長さ
-	final public static int GENOM_NUM = 1; //遺伝子の数
-	final public static int OFFSPRING_NUM = 1; //子孫の数
+	final public static int GENOM_LENGTH = 8; //遺伝子の長さ
+	final public static int GENOM_NUM = 100; //遺伝子の数
+	final public static int OFFSPRING_NUM = 50; //子孫の数
 	final public static double INDIVUDUAL_MUTATION_PROBABILITY = 0.1; //個体突然変異確率
 	final public static double GENOM_MUTATION_PROBABILITY = 0.1; //遺伝子突然変異確率
-	final public static int MAX_GENERATION = 40; //繰り返す世代数
+	final public static int MAX_GENERATION = 100; //繰り返す世代数
 	
 	Random rand = new Random();
 
@@ -81,13 +81,11 @@ public class GA {
 		double r = rand.nextDouble();
 		r /= OFFSPRING_NUM;
 	
-		int currentMember = 0;
 		int i = 0;
-		while(currentMember < OFFSPRING_NUM){
-			while(r <= cpdist[i] && currentMember < OFFSPRING_NUM){
+		while(matingPool.size() < OFFSPRING_NUM){
+			while(r <= cpdist[i] && matingPool.size() < OFFSPRING_NUM){
 				matingPool.add(parents.get(i));
 				r = r+(1/(double)OFFSPRING_NUM);
-				currentMember++;
 			}
 			i++;
 		}

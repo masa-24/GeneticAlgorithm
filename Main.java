@@ -19,8 +19,8 @@ public class Main {
 				double eval = ga.evaluation(currentGenerationIndividualGroup.get(i));
 				currentGenerationIndividualGroup.get(i).setEvaluation(eval); //現行世代のi番目の遺伝子に評価値を設定
 			}
-			System.out.println("交渉問題なし．終了します");
-			System.exit(-1);
+//			System.out.println("交渉問題なし．終了します");
+//			System.exit(-1);
 			//eliteGenes = ga.selection(currentGenerationIndividualGroup); //エリートを選択
 			eliteGenes = ga.stochasticUniversalSampling(currentGenerationIndividualGroup);
 			//子孫を生成

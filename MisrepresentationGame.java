@@ -5,11 +5,11 @@ import java.util.Random;
 public class MisrepresentationGame {
 	final public static ArrayList<Character> ISSUE = new ArrayList<>(Arrays.asList('A', 'B', 'C'));
 	Random rand = new Random();
-	ArrayList<Pair<Character, Integer>> SelfishAgentRevealedPreference = new ArrayList<>();
-	ArrayList<Pair<Character, Integer>> MisrepresentingAgentRevealedPreference = new ArrayList<>();
-	ArrayList<String> issuePermutation = new ArrayList<>();
+	ArrayList<String> issuePermutation = new ArrayList<>(); //論点の組み合わせを格納する
 	
-	public void preferenceElicitation(Agent agent1, Agent agent2, Genom g){
+	public Pair<ArrayList<Pair<Character, Integer>>, ArrayList<Pair<Character, Integer>>> preferenceElicitation(Agent agent1, Agent agent2, Genom g){
+		ArrayList<Pair<Character, Integer>> SelfishAgentRevealedPreference = new ArrayList<>(); //自己中心的なエージェントの公開された選好を格納
+		ArrayList<Pair<Character, Integer>> MisrepresentingAgentRevealedPreference = new ArrayList<>(); //Misrepresenting agentの公開された選好を格納
 		int count = 0;
 		
 		for(int i = 0; i < ISSUE.size(); i++){
@@ -24,62 +24,62 @@ public class MisrepresentationGame {
 					if(rand.nextBoolean()){
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
-						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
+//						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+//						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
 						if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
 							agent2revealed = agent2.compareIssue(issue1, issue2);
-							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 						}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
-							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 						}
 					}else{
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = agent2.compareIssue(issue1, issue2);
-						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
-						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+//						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
 						if(g.getGenom().get(6)){ //遺伝子6番目：preference言い直し機構
 							agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-							System.out.println("agent2 rerevealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//							System.out.println("agent2 rerevealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 						}
 					}
 				}else if(g.getGenom().get(1)){ //遺伝子1番目：同時に選好を公開
 					agent1revealed = agent1.compareIssue(issue1, issue2);
 					agent2revealed = agent2.compareIssue(issue1, issue2);
-					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
-					System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+//					System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 				}else if(g.getGenom().get(2)){ //遺伝子2番目：交互に選好を公開
 					if(count%2 == 0){
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
-						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
+//						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+//						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
 						if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
 							agent2revealed = agent2.compareIssue(issue1, issue2);
-							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 						}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
-							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//							System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 						}
 					}else{
 						agent1revealed = agent1.compareIssue(issue1, issue2);
 						agent2revealed = agent2.compareIssue(issue1, issue2);
-						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
-						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());						
+//						System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//						System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());						
 						if(g.getGenom().get(6)){ //遺伝子6番目：preference言い直し機構
 							agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-							System.out.println("agent2 rerevealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//							System.out.println("agent2 rerevealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 						}
 					}
 					count++;
 				}else{ //デフォルトは毎回同じ順番で選好を公開
 					agent1revealed = agent1.compareIssue(issue1, issue2);
 					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(issue1, issue2, agent1);
-					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
-					System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
+//					System.out.println("agent1: " + agent1revealed.getLeft() + " > " + agent1revealed.getRight());
+//					System.out.println("agent2: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight() + " (misrepresent)");
 					if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
 						agent2revealed = agent2.compareIssue(issue1, issue2);
-						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 					}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
-						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
+//						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed.getLeft() + " > " + agent2revealed.getRight());
 					}
 				}
 				reasoning(agent1revealed, SelfishAgentRevealedPreference);
@@ -96,10 +96,15 @@ public class MisrepresentationGame {
 			System.out.println(MisrepresentingAgentRevealedPreference.get(i).getLeft() + ", " + MisrepresentingAgentRevealedPreference.get(i).getRight());
 		}
 		*/
+		Pair<ArrayList<Pair<Character, Integer>>, ArrayList<Pair<Character, Integer>>> p = new Pair<>();
+		p.setBoth(SelfishAgentRevealedPreference, MisrepresentingAgentRevealedPreference);
+		return p;
 	}
 	
 	//選好を好きなものから1つづつ公開する
-	public void singlePreferenceElicitation(Agent agent1, Agent agent2, Genom g){
+	public Pair<ArrayList<Pair<Character, Integer>>, ArrayList<Pair<Character, Integer>>> singlePreferenceElicitation(SelfishAgent agent1, MisrepresentingAgent agent2, Genom g){
+		ArrayList<Pair<Character, Integer>> SelfishAgentRevealedPreference = new ArrayList<>(); //自己中心的なエージェントの公開された選好を格納
+		ArrayList<Pair<Character, Integer>> MisrepresentingAgentRevealedPreference = new ArrayList<>(); //Misrepresenting agentの公開された選好を格納
 		int count = 0;
 
 		for(int i = ISSUE.size(); i > 0; i--){
@@ -110,80 +115,79 @@ public class MisrepresentationGame {
 				if(rand.nextBoolean()){
 					agent1revealed = agent1.compareIssue(i);
 					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
-					System.out.println("agent1: " + agent1revealed);
-					System.out.println("agent2: " + agent2revealed + " (misrepresent)");
+//					System.out.println("agent1: " + agent1revealed);
+//					System.out.println("agent2: " + agent2revealed + " (misrepresent)");
 					if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
 						agent2revealed = agent2.compareIssue(i);
-						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+//						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
 					}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
-						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+//						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
 					}
 				}else{
 					agent1revealed = agent1.compareIssue(i);
 					agent2revealed = agent2.compareIssue(i);
-					System.out.println("agent2: " + agent2revealed);
-					System.out.println("agent1: " + agent1revealed);
+//					System.out.println("agent2: " + agent2revealed);
+//					System.out.println("agent1: " + agent1revealed);
 					if(g.getGenom().get(6)){ //遺伝子6番目：preference言い直し機構
 						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
-						System.out.println("agent2 rerevealed: " + agent2revealed);
+//						System.out.println("agent2 rerevealed: " + agent2revealed);
 					}
 				}
 			}else if(g.getGenom().get(1)){ //遺伝子1番目：同時に選好を公開
 				agent1revealed = agent1.compareIssue(i);
 				agent2revealed = agent2.compareIssue(i);
-				System.out.println("agent1: " + agent1revealed);
-				System.out.println("agent2: " + agent2revealed);
+//				System.out.println("agent1: " + agent1revealed);
+//				System.out.println("agent2: " + agent2revealed);
 			}else if(g.getGenom().get(2)){ //遺伝子2番目：交互に選好を公開
 				if(count%2 == 0){
 					agent1revealed = agent1.compareIssue(i);
 					agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
-					System.out.println("agent1: " + agent1revealed);
-					System.out.println("agent2: " + agent2revealed + " (misrepresent)");
+//					System.out.println("agent1: " + agent1revealed);
+//					System.out.println("agent2: " + agent2revealed + " (misrepresent)");
 					if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
 						agent2revealed = agent2.compareIssue(i);
-						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+//						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
 					}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
-						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+//						System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
 					}
 				}else{
 					agent1revealed = agent1.compareIssue(i);
 					agent2revealed = agent2.compareIssue(i);
-					System.out.println("agent2: " + agent2revealed);
-					System.out.println("agent1: " + agent1revealed);						
+//					System.out.println("agent2: " + agent2revealed);
+//					System.out.println("agent1: " + agent1revealed);						
 					if(g.getGenom().get(6)){ //遺伝子6番目：preference言い直し機構
 						agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
-						System.out.println("agent2 rerevealed: " + agent2revealed);
+//						System.out.println("agent2 rerevealed: " + agent2revealed);
 					}
 				}
 				count++;
 			}else{ //デフォルトは毎回同じ順番で選好を公開
 				agent1revealed = agent1.compareIssue(i);
 				agent2revealed = ((MisrepresentingAgent)agent2).compareIssue(i, agent1);
-				System.out.println("agent1: " + agent1revealed);
-				System.out.println("agent2: " + agent2revealed + " (misrepresent)");
+//				System.out.println("agent1: " + agent1revealed);
+//				System.out.println("agent2: " + agent2revealed + " (misrepresent)");
 				if(g.getGenom().get(4)){ //遺伝子4番目：ダウト機能．嘘つきは本当の戦略を公開
 					agent2revealed = agent2.compareIssue(i);
-					System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+//					System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
 				}else if(g.getGenom().get(5)){ //遺伝子5番目：ダウト機能．嘘つきは偽の戦略を公開し続ける
-					System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
+//					System.out.println("agent1 doutes agent2. agent2 revealed: " + agent2revealed);
 				}
 			}
 			reasoning(agent1revealed, i, SelfishAgentRevealedPreference);
 			reasoning(agent2revealed, i, MisrepresentingAgentRevealedPreference);
 		}
+		Pair<ArrayList<Pair<Character, Integer>>, ArrayList<Pair<Character, Integer>>> p = new Pair<>();
+		p.setBoth(SelfishAgentRevealedPreference, MisrepresentingAgentRevealedPreference);
+		return p;
 	}
-	
-	public Pair<Integer, Integer> deal(Agent agent1, Agent agent2, Genom g){
-		Pair<Integer, Integer> result = new Pair<>();
-		
-		permutation(arrayListToString(ISSUE), "");
+	public boolean deal(SelfishAgent agent1, MisrepresentingAgent agent2, Genom g, ArrayList<Pair<Character, Integer>> selfishAgentRevealedPref, ArrayList<Pair<Character, Integer>> misrepresentingAgentRevealedPref){
 		for(int i = 0; i < issuePermutation.size(); i++){
 			for(int j  = 1; j < ISSUE.size()-1; j++){
 				ArrayList<Character> item1 = stringToArrayList(issuePermutation.get(i).substring(0, j));
 				ArrayList<Character> item2 = stringToArrayList(issuePermutation.get(i).substring(j));
 				
-				int agent1Util = calcUtil(SelfishAgentRevealedPreference, item1);
-				int agent2Util = calcUtil(MisrepresentingAgentRevealedPreference, item2);
+				int agent1Util = calcUtil(selfishAgentRevealedPref, item1);
+				int agent2Util = calcUtil(misrepresentingAgentRevealedPref, item2);
 				if(g.getGenom().get(3)){ //遺伝子3番目：嘘ついてもバレる
 					agent1Util = calcUtil(agent1.getPreference(), item1);
 					agent2Util = calcUtil(agent2.getPreference(), item2);
@@ -192,13 +196,16 @@ public class MisrepresentationGame {
 				//System.err.println("agent2 recieved: " + item2 + ", agent2 utility: " + agent2Util);
 				//System.err.println("-------------------------------------------");
 				if(agent1Util == agent2Util){
-					result.setBoth(agent1Util, agent2Util);
-					return result;
+					agent1.setUtility(agent1.calculateUtility(item1));
+					agent2.setUtility(agent2.calculateUtility(item2));
+					agent2.setFakeUtility(agent2.calculateFakeUtility(item2, agent1));
+					if(agent2.getFakeUtility() < agent2.getUtility()){
+						return true;
+					}
 				}
 			}
 		}
-		result.setBoth(0, 0);
-		return result;
+		return false;
 	}
 	
 	//論点の分配パターンの組み合わせを計算
@@ -248,36 +255,52 @@ public class MisrepresentationGame {
 	
 	public double negotiation(Genom g){
 		double result = 0.0;	//評価値
-		ArrayList<Pair<Character, Integer>> selfishAgentPref = new ArrayList<>();
-		ArrayList<Pair<Character, Integer>> misrepresentingAgentPref = new ArrayList<>();
-		
-		// 自己中心的なエージェントの選好を用意
-		for(int i = 0; i < ISSUE.size(); i++){
-			Pair<Character, Integer> temp = new Pair<>();
-			temp.setBoth(ISSUE.get(i), i+1);
-			selfishAgentPref.add(temp);
-		}
-		// Misrepresenting agentの選好を用意
-		for(int i = 0; i < ISSUE.size(); i++){
-			Pair<Character, Integer> temp = new Pair<>();
-			temp.setBoth(ISSUE.get(i), ISSUE.size()-i);
-			misrepresentingAgentPref.add(temp);
-		}
-		
-		// エージェント生成
-		SelfishAgent sAgent = new SelfishAgent(selfishAgentPref);
-		MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
-		
-		if(g.getGenom().get(7)){
-			singlePreferenceElicitation(sAgent, mAgent, g);
-		}else{
-			preferenceElicitation(sAgent, mAgent, g);			
-		}
-		Pair<Integer, Integer> utility = deal(sAgent, mAgent, g);
+		int canMisrepresentNum = 0;
+		g.getGenom().set(3, false);
+		g.getGenom().set(4, false);
 
-		result = 1.0 / (double)(Math.abs(utility.getRight() - utility.getLeft()) + 1.0);
-		
-		System.out.println("result: " + result + ", agent1: " + utility.getLeft() + ", agent2: " + utility.getRight());
+		permutation(arrayListToString(ISSUE), "");
+		// 全ての選好パターンに対して
+		for(int i = 0; i < issuePermutation.size(); i++){
+			for(int j = 0; j < issuePermutation.size(); j++){
+				ArrayList<Pair<Character, Integer>> selfishAgentPref = new ArrayList<>();
+				ArrayList<Pair<Character, Integer>> misrepresentingAgentPref = new ArrayList<>();
+				
+				for(int k = 0; k < ISSUE.size(); k++){
+					Pair<Character, Integer> temp = new Pair<>();
+					temp.setBoth(issuePermutation.get(i).charAt(k), k+1);
+					selfishAgentPref.add(temp);
+				}
+				for(int k = 0; k < ISSUE.size(); k++){
+					Pair<Character, Integer> temp = new Pair<>();
+					temp.setBoth(issuePermutation.get(j).charAt(k), k+1);
+					misrepresentingAgentPref.add(temp);
+				}
+				// エージェント生成
+				SelfishAgent sAgent = new SelfishAgent(selfishAgentPref);
+				MisrepresentingAgent mAgent = new MisrepresentingAgent(misrepresentingAgentPref);
+				//選好公開
+				Pair<ArrayList<Pair<Character, Integer>>, ArrayList<Pair<Character, Integer>>> revealedPref = new Pair<>();
+				if(g.getGenom().get(7)){
+					revealedPref = singlePreferenceElicitation(sAgent, mAgent, g);
+				}else{
+					revealedPref = preferenceElicitation(sAgent, mAgent, g);
+				}
+				//交渉
+				boolean canMisrepresent = deal(sAgent, mAgent, g, revealedPref.getLeft(), revealedPref.getRight());
+				if(canMisrepresent){
+					canMisrepresentNum++;
+				}
+//				System.out.println("agent1: " + sAgent.getUtility() + ", agent2fake: " + mAgent.getFakeUtility() + ", agent2true: " + mAgent.getUtility());
+				//効用リセット
+				sAgent.setUtility(0);
+				mAgent.setUtility(0);
+				mAgent.setFakeUtility(0);
+			}
+		}
+		result = 1.0 / (1.0 + (double)canMisrepresentNum);
+				
+		System.out.println("result: " + result + ", misrepresent " + canMisrepresentNum);
 		return result;
 	}
 	
